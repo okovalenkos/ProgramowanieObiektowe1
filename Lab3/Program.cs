@@ -1,11 +1,11 @@
 ﻿ using System;
 
-    public interface IModular
+    public interface IModule
     {
         double Module();
     }
 
-    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>, IModular
+    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>, IModule
     {
         private double re;
         private double im;
