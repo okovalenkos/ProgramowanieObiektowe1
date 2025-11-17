@@ -1,11 +1,11 @@
 ﻿ using System;
 
-    public interface IModule
+    public interface IModular
     {
         double Module();
     }
 
-    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>, IModule
+    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>, IModular
     {
         private double re;
         private double im;
@@ -86,7 +86,7 @@
         public static void Main()
         {
             ComplexNumber z1 = new ComplexNumber(7, 2);
-            ComplexNumber z2 = new ComplexNumber(8, -9);
+            ComplexNumber z2 = new ComplexNumber(8, 9);
 
             Console.WriteLine("z1 = " + z1);
             Console.WriteLine("z2 = " + z2);
