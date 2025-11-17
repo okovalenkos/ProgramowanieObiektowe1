@@ -1,9 +1,11 @@
-﻿using System;
-using System.Globalization;
+﻿ using System;
 
-namespace Lab3
-{
-    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>
+    public interface IModular
+    {
+        double Module();
+    }
+
+    public class ComplexNumber : ICloneable, IEquatable<ComplexNumber>, IModular
     {
         private double re;
         private double im;
@@ -28,79 +30,77 @@ namespace Lab3
 
         public override string ToString()
         {
-            // Użycie invariant culture, aby reprezentacja liczb była przewidywalna
-            string reStr = re.ToString("G", CultureInfo.InvariantCulture);
-            string imAbsStr = Math.Abs(im).ToString("G", CultureInfo.InvariantCulture);
             string sign = im >= 0 ? " + " : " - ";
-            return $"{reStr}{sign}{imAbsStr}i";
+            return $"{re}{sign}{Math.Abs(im)}i";
         }
 
-        // ICloneable
+        // Operator +
+        public static ComplexNumber operator +(ComplexNumber a, ComplexNumber b)
+            => new ComplexNumber(a.re + b.re, a.im + b.im);
+
+        // Operator -
+        public static ComplexNumber operator -(ComplexNumber a, ComplexNumber b)
+            => new ComplexNumber(a.re - b.re, a.im - b.im);
+
+        // Operator *
+        public static ComplexNumber operator *(ComplexNumber a, ComplexNumber b)
+            => new ComplexNumber(
+                a.re * b.re - a.im * b.im,
+                a.re * b.im + a.im * b.re
+            );
+
+        // Sprzężenie (operator unarny -)
+        public static ComplexNumber operator -(ComplexNumber a)
+            => new ComplexNumber(a.re, -a.im);
+
+        // Clone()
         public object Clone()
+            => new ComplexNumber(re, im);
+
+        // Equals()
+        public bool Equals(ComplexNumber other)
         {
-            return new ComplexNumber(this.re, this.im);
+            if (other == null) return false;
+            return re == other.re && im == other.im;
         }
 
-        // IEquatable<ComplexNumber>
-        public bool Equals(ComplexNumber? other)
-        {
-            if (ReferenceEquals(other, null)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Double.Equals(this.re, other.re) && Double.Equals(this.im, other.im);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as ComplexNumber);
-        }
+        public override bool Equals(object obj)
+            => Equals(obj as ComplexNumber);
 
         public override int GetHashCode()
-        {
-            return HashCode.Combine(re, im);
-        }
+            => HashCode.Combine(re, im);
 
-        // Operatory binarne
-        public static ComplexNumber operator +(ComplexNumber a, ComplexNumber b)
-        {
-            if (a is null) throw new ArgumentNullException(nameof(a));
-            if (b is null) throw new ArgumentNullException(nameof(b));
-            return new ComplexNumber(a.re + b.re, a.im + b.im);
-        }
+        public static bool operator ==(ComplexNumber a, ComplexNumber b)
+            => a?.Equals(b) ?? b is null;
 
-        public static ComplexNumber operator -(ComplexNumber a, ComplexNumber b)
-        {
-            if (a is null) throw new ArgumentNullException(nameof(a));
-            if (b is null) throw new ArgumentNullException(nameof(b));
-            return new ComplexNumber(a.re - b.re, a.im - b.im);
-        }
+        public static bool operator !=(ComplexNumber a, ComplexNumber b)
+            => !(a == b);
 
-        public static ComplexNumber operator *(ComplexNumber a, ComplexNumber b)
-        {
-            if (a is null) throw new ArgumentNullException(nameof(a));
-            if (b is null) throw new ArgumentNullException(nameof(b));
-            double real = a.re * b.re - a.im * b.im;
-            double imag = a.re * b.im + a.im * b.re;
-            return new ComplexNumber(real, imag);
-        }
+        // Obliczanie modułu
+        public double Module()
+            => Math.Sqrt(re * re + im * im);
+    }
 
-        // Unarny operator - realizuje sprzężenie: -(a+bi) = a - bi (zgodnie z poleceniem)
-        public static ComplexNumber operator -(ComplexNumber a)
+    public class Program
+    {
+        public static void Main()
         {
-            if (a is null) throw new ArgumentNullException(nameof(a));
-            return new ComplexNumber(a.re, -a.im);
-        }
+            ComplexNumber z1 = new ComplexNumber(3, 4);
+            ComplexNumber z2 = new ComplexNumber(1, -2);
 
-        // Operatory == oraz !=
-        public static bool operator ==(ComplexNumber? left, ComplexNumber? right)
-        {
-            if (ReferenceEquals(left, right)) return true;
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null)) return false;
-            return left.Equals(right);
-        }
+            Console.WriteLine("z1 = " + z1);
+            Console.WriteLine("z2 = " + z2);
 
-        public static bool operator !=(ComplexNumber? left, ComplexNumber? right)
-        {
-            return !(left == right);
+            Console.WriteLine("z1 + z2 = " + (z1 + z2));
+            Console.WriteLine("z1 - z2 = " + (z1 - z2));
+            Console.WriteLine("z1 * z2 = " + (z1 * z2));
+
+            Console.WriteLine("-z1 (sprzężenie) = " + (-z1));
+
+            Console.WriteLine("z1 == z2 ? " + (z1 == z2));
+            Console.WriteLine("Moduł z1 = " + z1.Module());
+
+            ComplexNumber z3 = (ComplexNumber)z1.Clone();
+            Console.WriteLine("Kopia z1: " + z3);
         }
     }
-}
