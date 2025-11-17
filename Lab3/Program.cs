@@ -85,8 +85,8 @@
     {
         public static void Main()
         {
-            ComplexNumber z1 = new ComplexNumber(3, 4);
-            ComplexNumber z2 = new ComplexNumber(1, -2);
+            ComplexNumber z1 = new ComplexNumber(7, 2);
+            ComplexNumber z2 = new ComplexNumber(8, -9);
 
             Console.WriteLine("z1 = " + z1);
             Console.WriteLine("z2 = " + z2);
